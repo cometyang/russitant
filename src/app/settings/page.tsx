@@ -1,9 +1,11 @@
 'use client'
 
 import { Button } from '../components/Button'
-
-import React, { useState } from "react";
-
+import { invoke } from '@tauri-apps/api/tauri'
+import React, { useEffect, useState } from "react";
+import ProgressBar from "@ramonak/react-progress-bar";
+import { listen } from '@tauri-apps/api/event';
+import { appWindow } from '@tauri-apps/api/window';
 const modelList = [
     {
       name: "WizardLM-7B-GGML",
@@ -34,10 +36,36 @@ const modelList = [
     },
   ];
 
+// const unlistenProgress = await listen<string>('DOWNLOAD_PROGRESS', (event) => {
+//     console.log(`Got error in window ${event.windowLabel}, payload: ${event.payload}`);
+// });
 
 export default function Page(){
-    return (
+    const [completed, setCompleted] = useState<number>(0);
+
+    useEffect(() => {
+      setInterval(() => setCompleted(Math.floor(Math.random() * 100) + 1), 2000);
+
+    //   return () => {
+    //     // Anything in here is fired on component unmount.
+    //     unlistenProgress();
+    //     }
+    }, []);
+    
    
+
+
+    const handleDownload = async () => {
+        const ret = await invoke("download_file", {
+            url: `https://huggingface.co/gpt2/resolve/main/64-8bits.tflite`,
+            path: `./download/64-8bits.tflite`,
+            window: appWindow
+          });
+        console.log(ret)
+      }
+
+    return (
+
     <div className="space-y-4 text-vercel-pink">
          <ul className="sidebar__list">
           {modelList.map((item) => {
@@ -48,11 +76,18 @@ export default function Page(){
             );
           })}
         </ul>
+        <div>
+        <ProgressBar completed={completed} />
+        </div>
+        <div>
         <label>
-            <Button type="button" onClick={() =>{}}>
+            <Button type="button" onClick={handleDownload}>
               Download Model
             </Button>
         </label>
+
+        </div>
+
         </div>
 );
 }
