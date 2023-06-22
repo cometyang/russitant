@@ -36,20 +36,23 @@ const modelList = [
     },
   ];
 
-// const unlistenProgress = await listen<string>('DOWNLOAD_PROGRESS', (event) => {
-//     console.log(`Got error in window ${event.windowLabel}, payload: ${event.payload}`);
-// });
+
 
 export default function Page(){
     const [completed, setCompleted] = useState<number>(0);
 
     useEffect(() => {
-      setInterval(() => setCompleted(Math.floor(Math.random() * 100) + 1), 2000);
+        const unlistenProgress = listen<string>('DOWNLOAD_PROGRESS', (event) => {
+            console.log(`Got error in window ${event.windowLabel}, payload: ${event.payload["percentage"]}`);
+            setCompleted(event.payload["percentage"])
+        });
 
-    //   return () => {
-    //     // Anything in here is fired on component unmount.
-    //     unlistenProgress();
-    //     }
+      //setInterval(() => setCompleted(Math.floor(Math.random() * 100) + 1), 2000);
+
+      return () => {
+        // Anything in here is fired on component unmount.
+        unlistenProgress;
+        }
     }, []);
     
    

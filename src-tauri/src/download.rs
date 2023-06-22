@@ -93,18 +93,20 @@ pub async fn download_file(url: String, path: String, window: Window) -> Result<
         let downloaded_bytes=downloaded;
         let duration = start_time.elapsed().as_secs_f64();
         progress.transfered = downloaded_bytes;
-        progress.percentage = (progress.transfered * 100 / (progress.filesize+1)) as f64;
+        println!("Progress transferred: {},pct: {}",progress.transfered, progress.percentage);
+        progress.percentage = (progress.transfered * 100 / total_size) as f64;
         progress.transfer_rate = (downloaded_bytes as f64) / ((start_time.elapsed().as_secs() as f64)
             + (start_time.elapsed().subsec_nanos() as f64 / 1_000_000_000.0).trunc());
 
         // This is so I don't emit the event everytime. I do it every 50ms (UPDATE_SPEED).
         if last_update.elapsed().as_millis() >= UPDATE_SPEED {
+            println!("Transferred {}",progress.percentage);
             progress.emit_progress(&window);
             last_update = std::time::Instant::now();
         }
         //pb.set_position(new);
     }
-    println!("Finished Downloading");
+    println!("Finished Downloading, Pct: {}", progress.percentage );
     //pb.finish_with_message(format!("Downloaded {} to {}", url, path));
     progress.emit_finished(&window);
 
