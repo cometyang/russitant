@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Button } from './Button'
 import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './ChatLine'
 import { useCookies } from 'react-cookie'
+import { invoke } from '@tauri-apps/api/tauri'
 
 const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3'
 
@@ -68,49 +69,51 @@ export function Chat() {
     setMessages(newMessages)
     const last10messages = newMessages.slice(-10) // remember last 10 messages
 
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        messages: last10messages,
-        user: cookie[COOKIE_NAME],
-      }),
-    })
+    // const response = await fetch('/api/chat', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     messages: last10messages,
+    //     user: cookie[COOKIE_NAME],
+    //   }),
+    // })
+    const sentMessage= newMessages.slice(-1)
+    const response = await invoke("chat", {message: "Hello"});
 
     console.log('Edge function returned.')
 
-    if (!response.ok) {
-      throw new Error(response.statusText)
-    }
+    // if (!response.ok) {
+    //   throw new Error(response.statusText)
+    // }
 
-    // This data is a ReadableStream
-    const data = response.body
-    if (!data) {
-      return
-    }
+    // // This data is a ReadableStream
+    // const data = response.body
+    // if (!data) {
+    //   return
+    // }
 
-    const reader = data.getReader()
-    const decoder = new TextDecoder()
-    let done = false
+    // const reader = data.getReader()
+    // const decoder = new TextDecoder()
+    // let done = false
 
-    let lastMessage = ''
+    // let lastMessage = ''
 
-    while (!done) {
-      const { value, done: doneReading } = await reader.read()
-      done = doneReading
-      const chunkValue = decoder.decode(value)
+    // while (!done) {
+    //   const { value, done: doneReading } = await reader.read()
+    //   done = doneReading
+    //   const chunkValue = decoder.decode(value)
 
-      lastMessage = lastMessage + chunkValue
+    //   lastMessage = lastMessage + chunkValue
 
-      setMessages([
-        ...newMessages,
-        { role: 'assistant', content: lastMessage } as ChatGPTMessage,
-      ])
+    //   setMessages([
+    //     ...newMessages,
+    //     { role: 'assistant', content: lastMessage } as ChatGPTMessage,
+    //   ])
 
-      setLoading(false)
-    }
+    //   setLoading(false)
+    // }
   }
 
   return (
