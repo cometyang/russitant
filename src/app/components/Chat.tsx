@@ -3,6 +3,7 @@ import { Button } from './Button'
 import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './ChatLine'
 import { useCookies } from 'react-cookie'
 import { invoke } from '@tauri-apps/api/tauri'
+import { listen } from '@tauri-apps/api/event';
 
 const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3'
 
@@ -56,6 +57,11 @@ export function Chat() {
       // generate a semi random short id
       const randomId = Math.random().toString(36).substring(7)
       setCookie(COOKIE_NAME, randomId)
+      //
+      const unlistenNewToken = listen<string>('NEW_TOKEN', (event) => {
+        console.log(`Got error in window ${event.windowLabel}, payload: ${event.payload}`);
+      });
+
     }
   }, [cookie, setCookie])
 
@@ -80,7 +86,7 @@ export function Chat() {
     //   }),
     // })
     const sentMessage= newMessages.slice(-1)
-    const response = await invoke("chat", {message: "Hello"});
+    const response = await invoke("chat", {message: "What is the captial of China\n"});
 
     console.log('Edge function returned.')
 

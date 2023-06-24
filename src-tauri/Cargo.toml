@@ -20,9 +20,15 @@ futures-util = "0.3.28"
 rand = "0.8.5"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.4.0", features = [] }
+tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 reqwest = { version="0.11.18", features = [ "json", "stream"] }
 tokio = { version = "1.28.2", features = ["full"] }
-llm = "0.1.1"
+llm = { git = "https://github.com/rustformers/llm" , branch = "main" }
+rustyline = "11.0.0"
+clap = "4.3.5"
+
+[profile.dev.package.ggml-sys]
+opt-level = 3
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
