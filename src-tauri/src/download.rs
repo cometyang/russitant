@@ -1,5 +1,5 @@
 use std::cmp::min;
-use std::fs::{File, OpenOptions};
+use std::fs::{File};
 use std::io::{Seek, Write};
 use reqwest::Client;
 //use indicatif::{ProgressBar, ProgressStyle};

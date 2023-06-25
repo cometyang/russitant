@@ -13,6 +13,14 @@ export const initialMessages: ChatGPTMessage[] = [
     role: 'assistant',
     content: 'Hi! I am a friendly AI assistant. Ask me anything!',
   },
+  {
+    role: 'user',
+    content: "Hello",
+  },
+  {
+    role: 'assistant',
+    content: "Hi my name is Charlie!",
+  }
 ]
 
 const InputMessage = ({ input, setInput, sendMessage }: any) => (
@@ -46,6 +54,8 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
   </div>
 )
 
+
+
 export function Chat() {
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages)
   const [input, setInput] = useState('')
@@ -53,17 +63,32 @@ export function Chat() {
   const [cookie, setCookie] = useCookies([COOKIE_NAME])
 
   useEffect(() => {
-    if (!cookie[COOKIE_NAME]) {
+    //if (!cookie[COOKIE_NAME]) {
       // generate a semi random short id
-      const randomId = Math.random().toString(36).substring(7)
-      setCookie(COOKIE_NAME, randomId)
-      //
+      //const randomId = Math.random().toString(36).substring(7)
+      //setCookie(COOKIE_NAME, randomId)
+      let chunk="";
       const unlistenNewToken = listen<string>('NEW_TOKEN', (event) => {
-        console.log(`Got error in window ${event.windowLabel}, payload: ${event.payload}`);
+
+        setLoading(true);
+        console.log(`Got event in window ${event.windowLabel}, payload: ${event.payload['message']}`);
+        chunk += event.payload["message"];
+        const newMessages = [
+          ...messages,
+          { role: 'assistant', content: chunk } as ChatGPTMessage,
+        ]
+        setMessages(newMessages);
+        setLoading(false);
+        console.log('{newMessages}')
       });
 
-    }
-  }, [cookie, setCookie])
+      return () => {
+        // Anything in here is fired on component unmount.
+        setMessages(newMessages);
+        unlistenNewToken;
+        }
+    
+  }, [messages, setMessages])
 
   // send message to API /api/chat endpoint
   const sendMessage = async (message: string) => {
@@ -73,6 +98,8 @@ export function Chat() {
       { role: 'user', content: message } as ChatGPTMessage,
     ]
     setMessages(newMessages)
+    console.log('{newMessages}')
+    setLoading(false)
     const last10messages = newMessages.slice(-10) // remember last 10 messages
 
     // const response = await fetch('/api/chat', {
@@ -86,9 +113,10 @@ export function Chat() {
     //   }),
     // })
     const sentMessage= newMessages.slice(-1)
-    const response = await invoke("chat", {message: "What is the captial of China\n"});
+  
+    const response = await invoke("chat", {message: "Where is the captial of Beijing"});
 
-    console.log('Edge function returned.')
+    console.log(`Edge function returned. ${response}`)
 
     // if (!response.ok) {
     //   throw new Error(response.statusText)

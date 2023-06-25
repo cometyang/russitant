@@ -56,7 +56,11 @@ export default function Page(){
     }, []);
     
    
-
+    const activeModel = async () => {
+        const ret = await invoke("set_active_model", {
+          });
+        console.log(ret)
+      }
 
     const handleDownload = async () => {
         const ret = await invoke("download_file", {
@@ -88,7 +92,11 @@ export default function Page(){
               Download Model
             </Button>
         </label>
-
+        <label>
+            <Button type="button" onClick={activeModel}>
+              Active Model
+            </Button>
+        </label>
         </div>
 
         </div>
