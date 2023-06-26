@@ -55,10 +55,10 @@ export default function Sidebar() {
 
   return (
     <div className="sidebar__wrapper">
-      <button className="btn" onClick={toggleSidebarcollapseHandler}>
-        {isCollapsed ? <MdKeyboardArrowRight /> : <MdKeyboardArrowLeft />}
-      </button>
       <aside className="sidebar" data-collapse={isCollapsed}>
+        <button className="btn" onClick={toggleSidebarcollapseHandler}>
+          {isCollapsed ? <MdKeyboardArrowRight /> : <MdKeyboardArrowLeft />}
+        </button>
         <div className="sidebar__top">
           <Image
             src={logoPic}
@@ -67,7 +67,7 @@ export default function Sidebar() {
             className="sidebar__logo"
             alt="logo"
           />
-          <p className="sidebar__logo-name"> Russitant</p>
+          <p className="text-black sidebar__logo-name">Russitant</p>
         </div>
         <ul className="sidebar__list">
           {sidebarItems.map((item) => {
