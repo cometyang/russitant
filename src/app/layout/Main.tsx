@@ -1,5 +1,5 @@
 import React, { CSSProperties, ReactNode, forwardRef } from "react";
-import "../tailwind.css";
+import clsx from "clsx";
 
 type MainProps = {
   children?: ReactNode;
@@ -9,7 +9,7 @@ type MainProps = {
 
 const Main = forwardRef<HTMLDivElement, MainProps>((props, ref) => {
   return (
-    <div ref={ ref } className={ props.className } style={ props.style }>
+    <div ref={ ref } className={ clsx("w-screen h-screen overflow-hidden", props.className) } style={ props.style }>
       { props.children }
     </div>
   );

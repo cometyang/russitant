@@ -4,8 +4,10 @@ import Greet from './greet';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="w-full h-full p-4">
+      <div className="flex flex-col items-center justify-between w-full h-full p-4 bg-black rounded-xl p-4">
         <Greet />
+      </div>
     </main>
   )
 }
