@@ -40,8 +40,7 @@ export const Boundary = ({
   animateRerendering?: boolean;
 }) => {
   return (
-    <div
-      className={clsx('relative rounded-lg border border-dashed', {
+    <div className={clsx('relative rounded-lg border border-dashed m-4', {
         'p-3 lg:p-5': size === 'small',
         'p-4 lg:p-9': size === 'default',
         'border-gray-700': color === 'default',
