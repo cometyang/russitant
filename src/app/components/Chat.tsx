@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 import { Button } from './Button'
 import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './ChatLine'
-import { useCookies } from 'react-cookie'
 import { invoke } from '@tauri-apps/api/tauri'
-import { listen } from '@tauri-apps/api/event';
+import { Event, listen, UnlistenFn } from "@tauri-apps/api/event";
 
 const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3'
 
@@ -46,59 +45,37 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
   </div>
 )
 
-let isGenerating: boolean = false;
-
 export function Chat() {
-  const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages)
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  
   useEffect(() => {
-    
-      let chunk="";
-      const unlistenNewToken = listen<string>('NEW_TOKEN', (event) => {
-      if (!isGenerating) 
-      {
-        return;
+    const unlistener: Promise<UnlistenFn> = listen<{ message: string }>('NEW_TOKEN', (event: Event<{ message: string }>) => {
+      const lastMessage = messages[messages.length-1];
+      if (lastMessage && lastMessage.role === 'assistant') {
+        setMessages([...messages.slice(0, -1), { ...lastMessage, content: `${ lastMessage.content }${ event.payload.message }` }]);
+      } else {
+        setMessages([...messages, { role: 'assistant', content: event.payload.message }]);
       }
-        setLoading(true);
-        console.log(`Got event in window ${event.windowLabel}, payload: ${event.payload['message']}`);
-        chunk += event.payload.message;
-        const newMessages = [
-          ...messages,
-          { role: 'assistant', content: chunk } as ChatGPTMessage,
-        ]
-        setMessages(newMessages);
-        setLoading(false);
-        console.log(`${newMessages}`)
-      });
+    });
 
-      return () => {
-        unlistenNewToken;
-      }
-    
-  }, [setMessages])
+    return () => {
+      unlistener.then((unlistenFn) => unlistenFn());
+    };
+  }, []);
 
   // send message to API /api/chat endpoint
   const sendMessage = async (message: string) => {
     setLoading(true)
-    const newMessages = [
-      ...messages,
-      { role: 'user', content: message } as ChatGPTMessage,
-    ]
-    setMessages(newMessages)
-    console.log(`${newMessages}`)
-    setLoading(false)
-    const last10messages = newMessages.slice(-10) // remember last 10 messages
+    const newMessages = [...messages, { role: 'user', content: message } as ChatGPTMessage];
+    setMessages(newMessages);
+    console.log(`${newMessages}`);
+    setLoading(false);
 
-
-    const sentMessage= newMessages.slice(-1)
-    console.log(`Sent message:${sentMessage}`)
-    isGenerating = true;
-    const response = await invoke("chat", {message: message});
-    isGenerating = false;
-   
+    const sentMessage= newMessages.slice(-1);
+    console.log(`Sent message:${sentMessage}`);
+    await invoke("chat", {message: message});
   }
 
   return (
