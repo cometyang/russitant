@@ -12,14 +12,6 @@ export const initialMessages: ChatGPTMessage[] = [
   {
     role: 'assistant',
     content: 'Hi! I am a friendly AI assistant. Ask me anything!',
-  },
-  {
-    role: 'user',
-    content: "Hello",
-  },
-  {
-    role: 'assistant',
-    content: "Hi my name is Charlie!",
   }
 ]
 
@@ -60,13 +52,10 @@ export function Chat() {
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [cookie, setCookie] = useCookies([COOKIE_NAME])
+
   
   useEffect(() => {
-    //if (!cookie[COOKIE_NAME]) {
-      // generate a semi random short id
-      //const randomId = Math.random().toString(36).substring(7)
-      //setCookie(COOKIE_NAME, randomId)
+    
       let chunk="";
       const unlistenNewToken = listen<string>('NEW_TOKEN', (event) => {
       if (!isGenerating) 
@@ -86,10 +75,8 @@ export function Chat() {
       });
 
       return () => {
-        // Anything in here is fired on component unmount.
-        //setMessages(messages=>[...messages,   { role: 'assistant', content: chunk } ]);
         unlistenNewToken;
-        }
+      }
     
   }, [setMessages])
 
@@ -105,53 +92,13 @@ export function Chat() {
     setLoading(false)
     const last10messages = newMessages.slice(-10) // remember last 10 messages
 
-    // const response = await fetch('/api/chat', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     messages: last10messages,
-    //     user: cookie[COOKIE_NAME],
-    //   }),
-    // })
+
     const sentMessage= newMessages.slice(-1)
     console.log(`Sent message:${sentMessage}`)
     isGenerating = true;
     const response = await invoke("chat", {message: message});
     isGenerating = false;
-    console.log(`Edge function returned. ${response}`)
-
-    // if (!response.ok) {
-    //   throw new Error(response.statusText)
-    // }
-
-    // // This data is a ReadableStream
-    // const data = response.body
-    // if (!data) {
-    //   return
-    // }
-
-    // const reader = data.getReader()
-    // const decoder = new TextDecoder()
-    // let done = false
-
-    // let lastMessage = ''
-
-    // while (!done) {
-    //   const { value, done: doneReading } = await reader.read()
-    //   done = doneReading
-    //   const chunkValue = decoder.decode(value)
-
-    //   lastMessage = lastMessage + chunkValue
-
-    //   setMessages([
-    //     ...newMessages,
-    //     { role: 'assistant', content: lastMessage } as ChatGPTMessage,
-    //   ])
-
-    //   setLoading(false)
-    // }
+   
   }
 
   return (
