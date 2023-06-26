@@ -1,8 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap");
 :root {
     --color-bg: #fff;
     --color-border: #e5e7eb;
@@ -45,7 +46,7 @@
   }
   
   .sidebar__top {
-    width: max-content;
+    width: 100%;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -97,10 +98,9 @@
   }
 
   .btn {
-    position: relative;
+    position: absolute;
     left: 0;
-    top: 6.2rem;
-    border: none;
+    top: 4.8rem;
     background-color: #10b981;
     width: 1.5rem;
     height: 1.5rem;
