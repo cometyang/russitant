@@ -54,14 +54,14 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
   </div>
 )
 
-
+let isGenerating: boolean = false;
 
 export function Chat() {
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [cookie, setCookie] = useCookies([COOKIE_NAME])
-
+  
   useEffect(() => {
     //if (!cookie[COOKIE_NAME]) {
       // generate a semi random short id
@@ -69,26 +69,29 @@ export function Chat() {
       //setCookie(COOKIE_NAME, randomId)
       let chunk="";
       const unlistenNewToken = listen<string>('NEW_TOKEN', (event) => {
-
+      if (!isGenerating) 
+      {
+        return;
+      }
         setLoading(true);
         console.log(`Got event in window ${event.windowLabel}, payload: ${event.payload['message']}`);
-        chunk += event.payload["message"];
+        chunk += event.payload.message;
         const newMessages = [
           ...messages,
           { role: 'assistant', content: chunk } as ChatGPTMessage,
         ]
         setMessages(newMessages);
         setLoading(false);
-        console.log('{newMessages}')
+        console.log(`${newMessages}`)
       });
 
       return () => {
         // Anything in here is fired on component unmount.
-        setMessages(newMessages);
+        //setMessages(messages=>[...messages,   { role: 'assistant', content: chunk } ]);
         unlistenNewToken;
         }
     
-  }, [messages, setMessages])
+  }, [setMessages])
 
   // send message to API /api/chat endpoint
   const sendMessage = async (message: string) => {
@@ -98,7 +101,7 @@ export function Chat() {
       { role: 'user', content: message } as ChatGPTMessage,
     ]
     setMessages(newMessages)
-    console.log('{newMessages}')
+    console.log(`${newMessages}`)
     setLoading(false)
     const last10messages = newMessages.slice(-10) // remember last 10 messages
 
@@ -113,9 +116,10 @@ export function Chat() {
     //   }),
     // })
     const sentMessage= newMessages.slice(-1)
-  
-    const response = await invoke("chat", {message: "Where is the captial of Beijing"});
-
+    console.log(`Sent message:${sentMessage}`)
+    isGenerating = true;
+    const response = await invoke("chat", {message: message});
+    isGenerating = false;
     console.log(`Edge function returned. ${response}`)
 
     // if (!response.ok) {

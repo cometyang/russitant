@@ -201,7 +201,7 @@ pub async fn chat(message: String, app_handle: tauri::AppHandle, window: tauri::
                 {user_name}: What is the capital of France?\n\
                 {character_name}:  Paris is the capital of France."
             );
-            let prompt = format!("{persona}\n{history}");
+            let prompt = format!("{persona}\n{history}\n{user_name}:{message}");
             print!("prompt: {}", prompt);
             let mut answer = "".to_string();
             let res = start_inference(&app_handle, &model, prompt, |token| {
