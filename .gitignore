@@ -51,3 +51,6 @@ yarn-error.log*
 
 # ide
 .idea
+
+# model
+src-tauri/download
