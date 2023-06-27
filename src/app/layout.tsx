@@ -28,7 +28,7 @@ export default function RootLayout({
             <SidebarProvider>
               <Sidebar />
             </SidebarProvider>
-            <div className="w-full h-full">
+            <div className="w-full h-full overflow-y-auto">
               { children }
             </div>
           </div>

@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Button } from './Button'
-import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './ChatLine'
-import { useCookies } from 'react-cookie'
 import { invoke } from '@tauri-apps/api/tauri'
-import { listen } from '@tauri-apps/api/event';
-
-const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3'
+import { Event, listen, UnlistenFn } from "@tauri-apps/api/event";
+import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './ChatLine'
 
 // default first message to display in UI (not necessary to define the prompt)
 export const initialMessages: ChatGPTMessage[] = [
@@ -13,9 +10,19 @@ export const initialMessages: ChatGPTMessage[] = [
     role: 'assistant',
     content: 'Hi! I am a friendly AI assistant. Ask me anything!',
   }
-]
+];
 
-const InputMessage = ({ input, setInput, sendMessage }: any) => (
+type Message = {
+  message: string;
+};
+
+type InputMessageProps = {
+  input: string;
+  setInput: Dispatch<SetStateAction<string>>
+  sendMessage(_: string): void;
+};
+
+const InputMessage = ({ input, setInput, sendMessage }: InputMessageProps) => (
   <div className="mt-6 flex clear-both">
     <input
       type="text"
@@ -46,39 +53,26 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
   </div>
 )
 
-let isGenerating: boolean = false;
-
 export function Chat() {
-  const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages)
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages);
 
-  
   useEffect(() => {
-    
-      let chunk="";
-      const unlistenNewToken = listen<string>('NEW_TOKEN', (event) => {
-      if (!isGenerating) 
-      {
-        return;
-      }
-        setLoading(true);
-        console.log(`Got event in window ${event.windowLabel}, payload: ${event.payload['message']}`);
-        chunk += event.payload.message;
-        const newMessages = [
-          ...messages,
-          { role: 'assistant', content: chunk } as ChatGPTMessage,
-        ]
-        setMessages(newMessages);
-        setLoading(false);
-        console.log(`${newMessages}`)
+    const unlistener: Promise<UnlistenFn> = listen<Message>('NEW_TOKEN', (event: Event<Message>) => {
+      setMessages((current) => {
+        const lastMessage = current.slice(-1).shift();
+        switch (lastMessage?.role) {
+          case 'assistant': return [...current.slice(0, current.length-1), { ...lastMessage, content: `${lastMessage.content}${event.payload.message}` }];
+          case 'user': return [...current, { role: 'assistant', content: event.payload.message }];
+        }
       });
+    });
 
-      return () => {
-        unlistenNewToken;
-      }
-    
-  }, [setMessages])
+    return () => {
+      unlistener.then((unlistenFn) => unlistenFn());
+    };
+  }, []);
 
   // send message to API /api/chat endpoint
   const sendMessage = async (message: string) => {
@@ -95,14 +89,12 @@ export function Chat() {
 
     const sentMessage= newMessages.slice(-1)
     console.log(`Sent message:${sentMessage}`)
-    isGenerating = true;
     const response = await invoke("chat", {message: message});
-    isGenerating = false;
-   
+
   }
 
   return (
-    <div className="rounded-2xl border-zinc-100  lg:border lg:p-6">
+    <div className="rounded-2xl border-zinc-100 lg:border lg:p-6 overflow-y-auto">
       {messages.map(({ content, role }, index) => (
         <ChatLine key={index} role={role} content={content} />
       ))}

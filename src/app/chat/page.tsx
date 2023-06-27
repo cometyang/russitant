@@ -7,12 +7,12 @@ import { Chat } from '../components/Chat'
 export default function Page() {
   return (
     <Boundary>
-      <section className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 mx-4">
         <Text variant="h2">AI Chat Bot:</Text>
         <div className="w-full">
           <Chat />
         </div>
-      </section>
+      </div>
     </Boundary>
   );
 }
