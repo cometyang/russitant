@@ -216,6 +216,12 @@ pub async fn chat(message: String, app_handle: tauri::AppHandle, window: tauri::
                     .unwrap();
                 Ok(InferenceFeedback::Continue)
             }, &window);
+
+            match res {
+                Ok(stats) => println!("\n\nInference stats:\n{stats}"),
+                Err(e) => println!("Inference Error!")
+            }
+            
             //let mut rl = rustyline::DefaultEditor::new().expect("Failed to create input reader");
 
             // let mut rng = rand::thread_rng();
