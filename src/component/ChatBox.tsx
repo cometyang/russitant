@@ -1,8 +1,12 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Button } from './Button'
+'use client'
+
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { invoke } from '@tauri-apps/api/tauri'
 import { Event, listen, UnlistenFn } from "@tauri-apps/api/event";
 import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './ChatLine'
+import TextField from "@/component/TextField";
+import { RiSendPlaneFill as SendIcon } from "react-icons/ri";
+import clsx from "clsx";
 
 // default first message to display in UI (not necessary to define the prompt)
 export const initialMessages: ChatGPTMessage[] = [
@@ -16,47 +20,15 @@ type Message = {
   message: string;
 };
 
-type InputMessageProps = {
-  input: string;
-  setInput: Dispatch<SetStateAction<string>>
-  sendMessage(_: string): void;
+type ChatBoxProps = {
+  className?: string;
 };
 
-const InputMessage = ({ input, setInput, sendMessage }: InputMessageProps) => (
-  <div className="mt-6 flex clear-both">
-    <input
-      type="text"
-      aria-label="chat input"
-      required
-      className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 sm:text-sm"
-      value={input}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          sendMessage(input)
-          setInput('')
-        }
-      }}
-      onChange={(e) => {
-        setInput(e.target.value)
-      }}
-    />
-    <Button
-      type="submit"
-      className="ml-4 flex-none"
-      onClick={() => {
-        sendMessage(input)
-        setInput('')
-      }}
-    >
-      Say
-    </Button>
-  </div>
-)
-
-export function ChatBox() {
-  const [input, setInput] = useState('');
+const ChatBox = (props: ChatBoxProps) => {
+  const [input, setInput] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages);
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const unlistener: Promise<UnlistenFn> = listen<Message>('NEW_TOKEN', (event: Event<Message>) => {
@@ -90,27 +62,43 @@ export function ChatBox() {
     const sentMessage= newMessages.slice(-1)
     console.log(`Sent message:${sentMessage}`)
     const response = await invoke("chat", {message: message});
-
   }
 
+  const submit = () => {
+    setInput('');
+    sendMessage(input)
+      .catch();
+  };
+
+  useLayoutEffect(() => {
+    if (ref.current) {
+      const options: ScrollToOptions = { top: (ref.current as HTMLDivElement).scrollHeight };
+      ref.current?.scrollTo(options);
+    }
+  }, [ref.current?.scrollHeight]);
+
   return (
-    <div className="rounded-2xl border-zinc-100 lg:border lg:p-6 overflow-y-auto">
-      {messages.map(({ content, role }, index) => (
-        <ChatLine key={index} role={role} content={content} />
-      ))}
+    <div className={ clsx("flex flex-col justify-between w-full h-full overflow-hidden", props.className) }>
+      <div ref={ ref } className="w-full h-full mt-4 overflow-y-auto no-scrollbar scroll-smooth rounded-lg">
+        {messages.map(({ content, role }, index) => (
+          <ChatLine key={index} role={role} content={content} />
+        ))}
 
-      {loading && <LoadingChatLine />}
+        {loading && <LoadingChatLine />}
 
-      {messages.length < 2 && (
-        <span className="mx-auto flex flex-grow text-gray-600 clear-both">
-          Type a message to start the conversation
-        </span>
-      )}
-      <InputMessage
-        input={input}
-        setInput={setInput}
-        sendMessage={sendMessage}
+      </div>
+
+      <TextField
+        value={ input }
+        placeholder={ messages.length < 2 ? "Type a message to start the conversation" : '' }
+        onInput={ (e) => setInput((e.target as HTMLInputElement).value) }
+        onKeyDown={ (e) => { if (e.key === 'Enter') { submit() } } }
+        suffix={ <SendIcon size={ 24 } className="fill-primary cursor-pointer mx-2" onClick={ () => submit() } /> }
+        className="w-full min-h-fit mt-4"
+        clazz="placeholder:text-primary-mute/60"
       />
     </div>
   )
-}
+};
+
+export default ChatBox;

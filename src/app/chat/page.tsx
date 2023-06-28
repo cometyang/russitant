@@ -1,18 +1,12 @@
 'use client'
 
-import { Boundary } from '@/ui/component/Boundary';
-import { ChatBox } from "@/ui/component/ChatBox";
-import { Text } from '@vercel/examples-ui';
+import ChatBox from "@/component/ChatBox";
 
 const Chat = () => (
-  <Boundary>
-    <div className="flex flex-col gap-3 mx-4">
-      <Text variant="h2">AI Chat Bot:</Text>
-      <div className="w-full">
-        <ChatBox />
-      </div>
-    </div>
-  </Boundary>
+  <div className="flex flex-col w-full h-full p-4">
+    <div className="font-bold leading-none text-lg text-primary">AI Chat Bot</div>
+    <ChatBox className="w-full h-full" />
+  </div>
 );
 
 export default Chat;

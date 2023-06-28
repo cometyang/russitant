@@ -1,6 +1,6 @@
 'use client'
 
-import { Boundary } from '@/ui/component/Boundary';
+import { Boundary } from '@/component/Boundary';
 
 const NotFound = () => (
   <Boundary labels={['not-found.tsx']} color="pink">
