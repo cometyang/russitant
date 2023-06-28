@@ -1,5 +1,7 @@
-import Main from "@/ui/layout/Main";
-import Sidebar from '@/ui/component/Sidebar';
+'use client'
+
+import Main from "@/layout/Main";
+import Sidebar from '@/component/Sidebar';
 import clsx from "clsx";
 import { Inter } from 'next/font/google'
 import { ReactNode } from "react";
@@ -19,9 +21,12 @@ type RootLayoutProps = {
 const RootLayout = (props: RootLayoutProps) => (
   <html lang="en" className="[color-scheme:dark]">
     <body className={ clsx("bg-gray-1100 bg-[url('/grid.svg')]", inter.className) }>
-      <Main className="flex">
-        <Sidebar />
-        <div className="w-full h-full overflow-y-auto">{ props.children }</div>
+      <Main className="flex flex-col items-center justify-between">
+        <div className="flex items-start justify-between w-full h-full overflow-hidden">
+          <Sidebar className="h-full" />
+          <div className="w-full h-full">{ props.children }</div>
+        </div>
+        <div className="w-full min-h-fit bg-foreground-mute border-t border-primary text-primary">Chat Bot Statistics | 69 wpm</div>
       </Main>
     </body>
   </html>
