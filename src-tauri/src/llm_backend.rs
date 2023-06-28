@@ -71,7 +71,7 @@ fn inference_callback<'a>(
 #[tauri::command]
 pub fn set_current_model(app_handle: tauri::AppHandle) -> Result<(), String> {
     // load a GGML model from disk
-    let model_path = PathBuf::from_str("./download/ggml-model-q4_0.bin").unwrap();
+    let model_path = PathBuf::from_str("./download/orca-mini-13b.ggmlv3.q4_0.bin").unwrap();
     let model_architecture = String::from_str("llama").unwrap();
     match load_model(&model_path, &model_architecture) {
         Ok(model) => {

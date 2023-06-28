@@ -26,9 +26,9 @@ fn main() {
     let app_handle = app.app_handle();
     let model_config = CurrentLanguageModel {
       name: "llama".to_string(),
-      filename: "ggml-model-q4_0.bin".to_string(),
+      filename: "orca-mini-13b.ggmlv3.q4_0.bin".to_string(),
       architecture: "llama".to_string(),
-      path: "./download/ggml-model-q4_0.bin".to_string()
+      path: "./download/orca-mini-13b.ggmlv3.q4_0.bin".to_string()
     };
     localstore::save_current_model(app_handle.clone(), model_config);
     let model: Option<Box<dyn llm::Model>>= match localstore::get_active_model(app_handle) {
