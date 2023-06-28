@@ -1,21 +1,12 @@
 "use client";
 
+import { MdOutlineRoundaboutRight, MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
+import { RiQuestionAnswerLine, RiChatSmileLine, RiSettings4Line } from "react-icons/ri";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useContext, useState } from "react";
-import { useRouter } from "next/router";
-import {
-  RiQuestionAnswerLine,
-  RiChatSmileLine,
-  RiSettings4Line,
-} from "react-icons/ri";
-import {
-  MdOutlineRoundaboutRight,
-  MdKeyboardArrowRight,
-  MdKeyboardArrowLeft,
-} from "react-icons/md";
-import logoPic from "../../public/logo.jpg";
-import { SidebarContext } from "@/context/sidebar-context";
+import logoPic from "../../../public/logo.jpg";
+
 const sidebarItems = [
   {
     name: "Q&A",
@@ -49,29 +40,22 @@ const sidebarItems = [
   },
 ];
 
-export default function Sidebar() {
-  const { isCollapsed, toggleSidebarcollapseHandler } =
-    useContext(SidebarContext);
+const Sidebar = () => {
+  const [isCollapsed, setCollapsed] = useState<boolean>(false);
 
   return (
     <div className="sidebar__wrapper">
       <aside className="sidebar" data-collapse={isCollapsed}>
-        <button className="btn" onClick={toggleSidebarcollapseHandler}>
+        <button className="btn" onClick={ () => setCollapsed((collapsed) => !collapsed) }>
           {isCollapsed ? <MdKeyboardArrowRight /> : <MdKeyboardArrowLeft />}
         </button>
         <div className="sidebar__top">
-          <Image
-            src={logoPic}
-            width={80}
-            height={80}
-            className="sidebar__logo"
-            alt="logo"
-          />
+          <Image src={logoPic} width={80} height={80} className="sidebar__logo" alt="logo" />
           <p className="text-black sidebar__logo-name">Russitant</p>
         </div>
         <ul className="sidebar__list">
-          {sidebarItems.map((item) => {
-            return (
+          {
+            sidebarItems.map((item) => (
               <li className="sidebar__item" key={item.name}>
                 <Link href={item.href} className="sidebar__link">
                   <span className="sidebar_icon">
@@ -80,10 +64,12 @@ export default function Sidebar() {
                   <span className="sidebar__name"> {item.name} </span>
                 </Link>
               </li>
-            );
-          })}
+            ))
+          }
         </ul>
       </aside>
     </div>
   );
-}
+};
+
+export default Sidebar;

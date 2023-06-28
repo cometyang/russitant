@@ -53,7 +53,7 @@ const InputMessage = ({ input, setInput, sendMessage }: InputMessageProps) => (
   </div>
 )
 
-export function Chat() {
+export function ChatBox() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages);
