@@ -1,11 +1,12 @@
 'use client'
 
-import { Button } from '../components/Button'
-import { invoke } from '@tauri-apps/api/tauri'
 import React, { useEffect, useState } from "react";
 import ProgressBar from "@ramonak/react-progress-bar";
-import { listen } from '@tauri-apps/api/event';
+import { Button } from "@/ui/component/Button"
 import { appWindow } from '@tauri-apps/api/window';
+import { invoke } from '@tauri-apps/api/tauri'
+import { listen } from '@tauri-apps/api/event';
+
 const modelList = [
     {
       name: "WizardLM-7B-GGML",
