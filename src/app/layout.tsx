@@ -1,5 +1,3 @@
-'use client'
-
 import Main from "@/ui/layout/Main";
 import Sidebar from '@/ui/component/Sidebar';
 import clsx from "clsx";
