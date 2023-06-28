@@ -1,8 +1,8 @@
 use crate::AppState;
-use clap::Parser;
+//use clap::Parser;
 use llm::{models::Llama, Model, ModelArchitecture};
 use llm::{InferenceError, InferenceFeedback, InferenceStats, LoadError};
-use rustyline::error::ReadlineError;
+//use rustyline::error::ReadlineError;
 use std::sync::Mutex;
 use std::{convert::Infallible, path::PathBuf};
 use std::{io::Write, str::FromStr};
