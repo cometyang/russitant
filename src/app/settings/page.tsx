@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import ProgressBar from "@ramonak/react-progress-bar";
-import { Button } from "@/ui/component/Button"
+import { Button } from "@/component/Button"
 import { appWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/tauri'
 import { listen } from '@tauri-apps/api/event';

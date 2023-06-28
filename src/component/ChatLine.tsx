@@ -42,30 +42,26 @@ const convertNewLines = (text: string) =>
     </span>
   ))
 
-export function ChatLine({ role = 'assistant', content }: ChatGPTMessage) {
+export function ChatLine({ role = 'assistant', content, className }: ChatGPTMessage) {
   if (!content) {
     return null
   }
   const formatteMessage = convertNewLines(content)
 
   return (
-    <div
-      className={
-        role != 'assistant' ? 'float-right clear-both' : 'float-left clear-both'
-      }
-    >
+    <div className={ clsx(className, role != 'assistant' ? 'float-right clear-both' : 'float-left clear-both') }>
       <BalancerWrapper>
-        <div className="float-right mb-5 rounded-lg bg-white px-4 py-5 shadow-lg ring-1 ring-zinc-100 sm:px-6">
+        <div className="float-right mb-5 rounded-lg bg-foreground border border-primary px-4 py-5 sm:px-6">
           <div className="flex space-x-3">
             <div className="flex-1 gap-4">
-              <p className="font-large text-xxl text-gray-900">
+              <p className="text-xl text-xxl text-primary font-bold">
                 <a href="@/components/ChatLine#" className="hover:underline">
                   {role == 'assistant' ? 'AI' : 'You'}
                 </a>
               </p>
               <p
                 className={clsx(
-                  'text ',
+                  'text-primary-mute',
                   role == 'assistant' ? 'font-semibold font- ' : 'text-gray-400'
                 )}
               >

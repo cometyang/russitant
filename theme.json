@@ -1,0 +1,18 @@
+{
+  "transparent": "transparent",
+  "current": "currentColor",
+  "black": "#000000",
+  "white": "#FFFFFF",
+  "background": "#141414",
+  "background-accent": "#1D1D1D",
+  "background-mute": "#BBBBBB",
+  "foreground": "#222222",
+  "foreground-accent": "#2B2B2B",
+  "foreground-mute": "#191919",
+  "primary": "#A3C639",
+  "primary-accent": "#C2E25E",
+  "primary-mute": "#85A71D",
+  "secondary": "#C339C6",
+  "secondary-accent": "#D35DD7",
+  "secondary-mute": "#B11AB6"
+}
