@@ -46,7 +46,7 @@ fn load_store(app_handle: tauri::AppHandle) -> Store<tauri::Wry> {
 
 pub(crate) fn save_current_model(
     app_handle: tauri::AppHandle,
-    model: CurrentLanguageModel
+    model: CurrentLanguageModel,
 ) -> Result<(), String> {
     let mut store = load_store(app_handle);
     store

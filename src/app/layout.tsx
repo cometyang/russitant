@@ -9,10 +9,10 @@ import '@/app/globals.css';
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const metadata = {
-  title: 'Russitant',
-  description: 'AI Assistant',
-}
+// export const metadata = {
+//   title: 'Russitant',
+//   description: 'AI Assistant',
+// }
 
 type RootLayoutProps = {
   children: ReactNode;

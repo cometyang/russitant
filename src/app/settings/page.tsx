@@ -6,38 +6,12 @@ import { Button } from "@/component/Button"
 import { appWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/tauri'
 import { listen } from '@tauri-apps/api/event';
+import { downloadedModels } from "@/data/models";
+import { open } from '@tauri-apps/api/dialog';
+import { appDir } from '@tauri-apps/api/path';
+import { Command } from "@/invoke/command"
 
-const modelList = [
-    {
-      name: "WizardLM-7B-GGML",
-
-    },
-    {
-      name: "WizardLM-13B-GGML",
-
-    },
-    {
-      name: "LLaMa-7B-GGML",
-
-     
-    },
-    {
-      name: "LLaMa-30B-GGML",
-
- 
-    },
-    {
-      name: "LLaMa-13B-GGML",
-
-
-    },
-    {
-      name: "LLaMa-65-GGML",
-
-    },
-  ];
-
-
+let modelsFolder: string = '';
 
 export default function Page(){
     const [completed, setCompleted] = useState<number>(0);
@@ -56,15 +30,31 @@ export default function Page(){
         }
     }, []);
     
-   
+    function getLanguageModels() {
+      // tauri
+      //   .invoke<CommandResponseLanguagesModels>('get_language_models')
+      //   .then((result) => {
+      //     console.log('Language models:' + JSON.stringify(result));
+      //     languageModels = result.models;
+      //     current_model = languageModels.filter((model) => model.current == true)[0];
+      //     console.log('Language models javascript:' + JSON.stringify(languageModels));
+      //     console.log('Current model:' + JSON.stringify(current_model));
+      //   })
+      //   .catch((error) => {
+      //     console.log('Error:' + error);
+      //     toasts.error('Error getting language models: ' + error);
+      //   });
+    }
+
+
     const activeModel = async () => {
-        const ret = await invoke("set_active_model", {
+        const ret = await invoke(Command.SetActiveModel, {
           });
         console.log(ret)
       }
 
     const handleDownload = async () => {
-        const ret = await invoke("download_file", {
+        const ret = await invoke(Command.DownloadFile, {
             url: `https://huggingface.co/gpt2/resolve/main/64-8bits.tflite`,
             path: `./download/64-8bits.tflite`,
             window: appWindow
@@ -72,11 +62,28 @@ export default function Page(){
         console.log(ret)
       }
 
+    const selectFolder = async () => {
+   
+      const selected = await open({
+        directory: true,
+        multiple: true,
+        defaultPath: await appDir(),
+      });
+      if (Array.isArray(selected)) {
+        // user selected multiple directories
+      } else if (selected === null) {
+        // user cancelled the selection
+      } else {
+        // user selected a single directory
+        
+      }
+    }
+
     return (
 
     <div className="space-y-4 text-vercel-pink">
          <ul className="sidebar__list">
-          {modelList.map((item) => {
+          {downloadedModels.map((item) => {
             return (
               <li className="sidebar__item" key={item.name}>
                   <span className="sidebar__name"> {item.name} </span>
@@ -88,6 +95,11 @@ export default function Page(){
         <ProgressBar completed={completed} />
         </div>
         <div>
+        <label>
+            <Button type="button" onClick={selectFolder}>
+              Select Folder
+            </Button>
+        </label>
         <label>
             <Button type="button" onClick={handleDownload}>
               Download Model

@@ -30,8 +30,8 @@ fn print_token(t: String) {
 
 fn inference_callback<'a>(
     stop_sequence: String,
-    buf: &'a mut  String,
-    window:  &'a  tauri::Window
+    buf: &'a mut String,
+    window: &'a tauri::Window,
 ) -> impl FnMut(llm::InferenceResponse) -> Result<llm::InferenceFeedback, Infallible> + 'a {
     move |resp| match resp {
         llm::InferenceResponse::InferredToken(t) => {
@@ -48,14 +48,7 @@ fn inference_callback<'a>(
             if buf.is_empty() {
                 //println!("buf empty\n");
                 print_token(t.clone());
-                window
-                .emit(
-                    "NEW_TOKEN",
-                    Payload {
-                        message: t,
-                    },
-                )
-                .unwrap();
+                window.emit("NEW_TOKEN", Payload { message: t }).unwrap();
                 Ok(llm::InferenceFeedback::Continue)
             } else {
                 //println!("reverse buf\n");
@@ -117,7 +110,7 @@ fn start_inference(
     model: &Box<dyn llm::Model>,
     prompt: String,
     mut inference_token_callback: impl FnMut(String) -> Result<InferenceFeedback, Infallible>,
-    window: &tauri::Window
+    window: &tauri::Window,
 ) -> Result<InferenceStats, InferenceError> {
     let mut session = model.start_session(Default::default());
 
@@ -135,7 +128,7 @@ fn start_inference(
             }
             llm::InferenceResponse::InferredToken(t) => {
                 //print_token(&t);
-                println!("infer token {}",&t);
+                println!("infer token {}", &t);
                 return inference_token_callback(t);
                 //Ok(llm::InferenceFeedback::Continue)
             }
@@ -155,9 +148,7 @@ fn start_inference(
             model.as_ref(),
             &mut rng,
             &llm::InferenceRequest {
-                prompt: new_prompt
-                    .as_str()
-                    .into(),
+                prompt: new_prompt.as_str().into(),
                 parameters: &inference_parameters,
                 play_back_previous_tokens: false,
                 maximum_token_count: None,
@@ -204,24 +195,30 @@ pub async fn chat(message: String, app_handle: tauri::AppHandle, window: tauri::
             let prompt = format!("{persona}\n{history}\n{user_name}:{message}");
             print!("prompt: {}", prompt);
             let mut answer = "".to_string();
-            let res = start_inference(&app_handle, &model, prompt, |token| {
-                answer.push_str(&token);
-                window
-                    .emit(
-                        "NEW_TOKEN",
-                        Payload {
-                            message: token.to_string(),
-                        },
-                    )
-                    .unwrap();
-                Ok(InferenceFeedback::Continue)
-            }, &window);
+            let res = start_inference(
+                &app_handle,
+                &model,
+                prompt,
+                |token| {
+                    answer.push_str(&token);
+                    window
+                        .emit(
+                            "NEW_TOKEN",
+                            Payload {
+                                message: token.to_string(),
+                            },
+                        )
+                        .unwrap();
+                    Ok(InferenceFeedback::Continue)
+                },
+                &window,
+            );
 
             match res {
                 Ok(stats) => println!("\n\nInference stats:\n{stats}"),
-                Err(e) => println!("Inference Error!")
+                Err(e) => println!("Inference Error!"),
             }
-            
+
             //let mut rl = rustyline::DefaultEditor::new().expect("Failed to create input reader");
 
             // let mut rng = rand::thread_rng();
