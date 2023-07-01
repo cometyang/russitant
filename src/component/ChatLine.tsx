@@ -50,10 +50,11 @@ export function ChatLine({ role = 'assistant', content, className }: ChatGPTMess
 
   return (
     <div className={ clsx(className, role != 'assistant' ? 'float-right clear-both' : 'float-left clear-both') }>
-      <BalancerWrapper>
+      
         <div className="float-right mb-5 rounded-lg bg-foreground border border-primary px-4 py-5 sm:px-6">
           <div className="flex space-x-3">
             <div className="flex-1 gap-4">
+            <BalancerWrapper>
               <p className="text-xl text-xxl text-primary font-bold">
                 <a href="@/components/ChatLine#" className="hover:underline">
                   {role == 'assistant' ? 'AI' : 'You'}
@@ -67,10 +68,11 @@ export function ChatLine({ role = 'assistant', content, className }: ChatGPTMess
               >
                 {formatteMessage}
               </p>
+              </BalancerWrapper>
             </div>
           </div>
         </div>
-      </BalancerWrapper>
+      
     </div>
   )
 }
