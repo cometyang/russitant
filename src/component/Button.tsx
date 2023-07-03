@@ -1,4 +1,7 @@
 import clsx from 'clsx'
+import { ButtonHTMLAttributes, ComponentType, forwardRef } from 'react'
+import { Spinner } from './Spinner'
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 export function Button({ className, ...props }: any) {
   return (
@@ -12,3 +15,24 @@ export function Button({ className, ...props }: any) {
     />
   )
 }
+
+const SpinnerButton = forwardRef<
+  HTMLButtonElement,
+  ButtonProps & {
+    Icon?: ComponentType<{ className?: string }>
+    isSpinning?: boolean
+  }
+>(({ children, Icon = null, isSpinning = false, ...props }, ref) => (
+  <Button {...props} ref={ref} disabled={isSpinning || props.disabled}>
+    {isSpinning ? (
+      <Spinner className={`w-5 h-5`} />
+    ) : (
+      Icon && <Icon className={`w-5 h-5`} />
+    )}
+    {children}
+  </Button>
+))
+
+SpinnerButton.displayName = "SpinnerButton"
+
+export {SpinnerButton}

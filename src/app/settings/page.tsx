@@ -10,7 +10,12 @@ import { downloadedModels } from "@/data/models";
 import { open } from '@tauri-apps/api/dialog';
 import { appDir } from '@tauri-apps/api/path';
 import { Command } from "@/invoke/command"
-
+import { Input } from "@/component/Input";
+import { ViewContainer, ViewHeader, ViewBody } from "@/layout/view";
+import { DotsHorizontalIcon, OpenInNewWindowIcon } from "@radix-ui/react-icons";
+import { ModelSelector } from "@/component/ModelSelector";
+import { useGlobal } from "@/providers/global";
+import { ModelListItem } from "@/component/ModelListItem";
 let modelsFolder: string = '';
 
 export default function Page(){
@@ -79,19 +84,57 @@ export default function Page(){
       }
     }
 
+    // const {
+
+    // } = useGlobal()
+    
     return (
 
-    <div className="space-y-4 text-vercel-pink">
-         <ul className="sidebar__list">
-          {downloadedModels.map((item) => {
-            return (
-              <li className="sidebar__item" key={item.name}>
-                  <span className="sidebar__name"> {item.name} </span>
-              </li>
-            );
-          })}
-        </ul>
-        <div>
+      <ViewContainer className="relative z-50">
+      <ViewHeader>
+         <Input
+            className ="w-full lg:w-144 leading-none text-lg text-primary"
+            value="Models"
+            readOnly
+            placeholder="Models directory"
+         />
+         <Button
+            title="Change models directory"
+            className="w-10 p-3 rounded-none"
+            onClick={async () => {
+              // const selected = (await dialogOpen({
+              //   directory: true,
+              //   multiple: false
+              // })) as string
+
+              // if (!selected) {
+              //   return
+              // }
+              // await updateModelsDirectory(selected)
+            }}>
+            <DotsHorizontalIcon />
+          </Button>
+
+          <Button
+            title="Open models directory"
+            className="w-10 p-3 rounded-l-none"
+            onClick={() => {
+              // invoke(InvokeCommand.OpenDirectory, {
+              //   path: modelsDirectory
+              // })
+            }}>
+            <OpenInNewWindowIcon />
+          </Button>
+      </ViewHeader>
+      <ViewBody className="flex flex-col p-4 gap-2">
+        <ModelSelector className="sticky top-0 z-50 shadow-sm p-1 rounded-lg bg-gray-1 shadow-gray-6" />
+        {downloadedModels.length === 0 && (
+          <p className="text-gray-9 italic pointer-events-none text-center">
+            {`To start, download a model or change the models directory by
+            clicking the "..." button.`}
+          </p>
+        )}
+        {/* <div>
         <ProgressBar completed={completed} />
         </div>
         <div>
@@ -110,9 +153,23 @@ export default function Page(){
               Active Model
             </Button>
         </label>
+        </div> */}
+        <div className="flex flex-col p-2 gap-6 z-0">
+          {downloadedModels
+            .sort((a, b) => -1
+              // activeModel?.path === a.path
+              //   ? -1
+              //   : activeModel?.path === b.path
+              //   ? 1
+              //   : 0
+            )
+            .map((model) => (
+              <ModelListItem key={model.name} model={model} />
+            ))}
         </div>
-
-        </div>
+        
+        </ViewBody>
+    </ViewContainer>
 );
 }
 
