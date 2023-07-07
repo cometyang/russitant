@@ -7,9 +7,11 @@ import { createProvider } from "puro"
 const useGlobalProvider = () => {
 
     //const activeModelState = useState<ModelMetadata>(null)
+    const [imageData, setImageData] = useState(null);
     return {
         //knownModels
-
+        imageData,
+        setImageData
     }
 }
 

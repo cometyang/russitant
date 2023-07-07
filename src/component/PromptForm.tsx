@@ -1,6 +1,9 @@
-import { useState } from "react";
-import { Button } from "./Button";
+import { useEffect, useState } from "react";
+import { SpinnerButton } from "./Button";
 import { Input } from "./Input";
+import { invoke } from "@tauri-apps/api/tauri";
+import { DownloadIcon } from "@radix-ui/react-icons";
+import { useGlobal } from "@/providers/global";
 
 const samplePrompts = [
   "a gentleman otter in a 19th century portrait",
@@ -16,8 +19,16 @@ const samplePrompts = [
 // import * as _ from "lodash";
 
 export default function PromptForm() {
-  const [prompt] = useState(samplePrompts[0]);
-  // const [image, setImage] = useState(null);
+  const [prompt, setPrompt] = useState(samplePrompts[0]);
+  const [isProcessing, setProcessing] = useState(false);
+
+  const {imageData, setImageData} = useGlobal();
+
+  
+  const submit = () => {
+    setPrompt(prompt);
+    console.log(prompt)
+  };
 
   return (
     // <form
@@ -31,14 +42,30 @@ export default function PromptForm() {
           name="prompt"
           placeholder="Enter a prompt..."
           className="block fill-primary w-full flex-grow rounded-l-md"
+          onInput={ (e) => setPrompt((e.target as HTMLInputElement).value) }
+          onKeyDown={ (e) => { if (e.key === 'Enter') { submit() } } }
         />
 
-        <Button
-          className="bg-black text-primary rounded-r-md text-small inline-block px-3 flex-none"
-          type="submit"
+        <SpinnerButton
+        Icon={DownloadIcon}
+        disabled={false}
+        isSpinning={isProcessing}
+        onClick={
+          async () => {
+            setProcessing(true);
+            
+            console.log(prompt);
+            const response=await invoke("generate_image", {prompt: prompt})
+    
+              //return setImageData(JSON::stringify(res))
+            setImageData(response);
+            
+            setProcessing(false);
+          }
+        }
         >
           Generate
-        </Button>
+        </SpinnerButton>
       </div>
     // </form>
   );

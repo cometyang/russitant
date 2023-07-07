@@ -1,9 +1,12 @@
 use clap::Parser;
 use diffusers::pipelines::stable_diffusion;
 use diffusers::transformers::clip;
+use tauri::http::{ResponseBuilder, Response};
 use tch::{nn::Module, Device, Kind, Tensor}; 
-
-
+use std::{fs::{self, read}, error::Error};
+// use image::{DynamicImage, ImageOutputFormat, ImageResult};
+// use base64::{encode, STANDARD};
+use base64;
 const GUIDANCE_SCALE: f64 = 7.5;
 
 
@@ -145,12 +148,12 @@ fn output_filename(
 
 
 #[tauri::command]
-pub fn generate_image(
+pub async fn generate_image(
   prompt: String,
   app_handle: tauri::AppHandle,
   window: tauri::Window,
-) -> Result<(),String>{
-    
+) -> Result<String, String>{
+   
     let clip_weights = "data/clip_v2.1.safetensors".to_string();
     let vae_weights = "data/vae_v2.1.safetensors".to_string();
     let unet_weights = "data/unet_v2.1.safetensors".to_string();
@@ -158,6 +161,7 @@ pub fn generate_image(
     tch::maybe_init_cuda();
     println!("Cuda available: {}", tch::Cuda::is_available());
     println!("Cudnn available: {}", tch::Cuda::cudnn_is_available());
+    println!("MPS available: {}", tch::utils::has_mps());
     let sd_version= StableDiffusionVersion::V2_1;
     let sliced_attention_size=None;
     let sd_config = match sd_version {
@@ -202,6 +206,8 @@ pub fn generate_image(
     let bsize = 1;
     let intermediary_images=false;
     let seed = 32;
+  
+    let mut output=String::new();
     for idx in 0..num_samples {
         tch::manual_seed(seed + idx);
         let mut latents = Tensor::randn(
@@ -241,10 +247,25 @@ pub fn generate_image(
         let image = (image / 2 + 0.5).clamp(0., 1.).to_device(Device::Cpu);
         let image = (image * 255.).to_kind(Kind::Uint8);
         let final_image = output_filename(&final_image, idx + 1, num_samples, None);
-        tch::vision::image::save(&image, final_image).unwrap();
+        tch::vision::image::save(&image, &final_image).unwrap();
+
+        let mut head_string= "data:image/png;base64,".to_string();
+        output=if let Ok(data) = read(final_image) {
+          head_string.push_str(&base64::encode(&data));
+          head_string
+        }
+        else {
+            "Failed".to_string()
+        }
+        
+        
     }
 
-    // drop(no_grad_guard);
-    Ok(())
+    drop(no_grad_guard);
+
+    
+    
+    Ok(output)
+
     
 }
