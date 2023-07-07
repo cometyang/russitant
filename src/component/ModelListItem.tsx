@@ -3,6 +3,7 @@ import { Model } from "@/data/models";
 import { ModelProvider, useModel } from "@/providers/model";
 import { cn } from "@/theme/utils";
 import { useState } from "react";
+import { ModelConfig } from "./ModelConfig";
 
 const ModelLabel = () => {
     const { model } = useModel()
@@ -20,7 +21,7 @@ const ModelLabel = () => {
     )
 }
 
-export const ModelListItem = ({ model }: { model: Model }) => {
+export const ModelListItem = ({ model }: { model: ModelMetadata }) => {
     return (
     <ModelProvider model={model}>
     <div
@@ -34,6 +35,7 @@ export const ModelListItem = ({ model }: { model: Model }) => {
             <div className="flex justify-between w-full">
                 <ModelLabel />
             </div>
+            <ModelConfig/>
         </div>
     </ModelProvider>
     )

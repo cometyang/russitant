@@ -6,6 +6,9 @@ import { Model, downloadedModels } from "@/data/models"
 import { SpinnerButton } from "./Button"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { useGlobal } from "@/providers/global"
+import { invoke } from "@tauri-apps/api/tauri"
+import { Command } from "@/invoke/command"
+import { appWindow } from '@tauri-apps/api/window';
 export const ModelSelector = ({ className = "" }) => {
     const {
        // modelsDirectoryState: { updateModelsDirectory, modelsMap },
@@ -13,15 +16,19 @@ export const ModelSelector = ({ className = "" }) => {
       } = useGlobal()
 
     interface ModelByString {
-        [key: string]: {name: string}
+        [key: string]: {
+            name: string,
+            url : string}
     }
 
     const modelMap : ModelByString = {
         "LLaMa-7B-GGML": {
-            name: "LLama 7B"
+            name: "LLama 7B",
+            url: "https://huggingface.co/Cometyang/ggml-q4/resolve/main/ggml-model-q4_0.bin",
         },
         "Orca-mini-13B-GGML": {
-            name: "Orca mini 13B"
+            name: "Orca mini 13B",
+            url: "https://huggingface.co/Cometyang/ggml-q4/resolve/main/ggml-model-q4_0.bin",
         }
     }
     const [selectedModelHash, setSelectedModelHash] = useState<string>("")
@@ -39,7 +46,7 @@ export const ModelSelector = ({ className = "" }) => {
 
     const models = downloadedModels
     return (
-        <div className={cn("flex gap-2 w-full z-50", className)}>
+        <div className={cn("flex gap-2 w-full", className)}>
             <Select value={selectedModelHash} onValueChange={setSelectedModelHash}>
             <SelectTrigger
           className={cn(
@@ -67,7 +74,7 @@ export const ModelSelector = ({ className = "" }) => {
             .map((model) => (
               <SelectItem key={model.url} value={model.name}>
                 <div
-                  className={cn("flex flex-col gap-2 text-md w-full text-xs")}>
+                  className={cn("flex flex-col gap-2 text-md w-full text-xs  text-primary bg-foreground-mute hover:bg-foreground active:bg-foreground-accent border border-primary")}>
                   <div className="flex items-center justify-between w-full">
                     <span
                       className={cn(
@@ -115,12 +122,13 @@ export const ModelSelector = ({ className = "" }) => {
         isSpinning={isDownloading}
         onClick={async () => {
           setIsDownloading(true)
-        //   try {
-        //     const outputPath = await invoke(InvokeCommand.StartDownload, {
-        //       name: selectedModel.name,
-        //       downloadUrl: selectedModel.downloadUrl,
-        //       digest: selectedModel.blake3
-        //     })
+          try {
+            const ret = await invoke(Command.DownloadFile, {
+                url: selectedModel.url,
+                name: selectedModel.name,
+                window: appWindow
+            })
+            console.log(ret)
 
         //     await invoke(InvokeCommand.SetModelConfig, {
         //       path: outputPath,
@@ -130,12 +138,12 @@ export const ModelSelector = ({ className = "" }) => {
         //         defaultPromptTemplate: selectedModel.promptTemplate || ""
         //       }
         //     })
-        //   } catch (error) {
-        //     alert(error)
-        //   }
-        //   setSelectedModelHash(undefined)
+          } catch (error) {
+            alert(error)
+          }
+        setSelectedModelHash("")
 
-        //   await updateModelsDirectory()
+          //await updateModelsDirectory()
           setIsDownloading(false)
         }}>
         Download

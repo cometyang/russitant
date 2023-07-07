@@ -4,6 +4,7 @@ mod download;
 mod llm_backend;
 mod localstore;
 mod model_settings;
+mod stablediffusion;
 use std::{path::PathBuf, str::FromStr, sync::Mutex, vec};
 
 use llm_backend::{load_model, set_current_model};
@@ -100,6 +101,7 @@ fn main() {
       llm_backend::chat,
       llm_backend::set_current_model,
       model_settings::choose_directory,
+      stablediffusion::generate_image,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

@@ -65,9 +65,18 @@ dependencies:
   eslint-config-next:
     specifier: 13.4.7
     version: 13.4.7(eslint@8.43.0)(typescript@5.1.3)
+  iconoir-react:
+    specifier: ^6.9.0
+    version: 6.9.0(react@18.2.0)
   lint-staged:
     specifier: ^13.2.2
     version: 13.2.2
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
+  lucide-react:
+    specifier: ^0.258.0
+    version: 0.258.0(react@18.2.0)
   next:
     specifier: 13.4.7
     version: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
@@ -101,6 +110,9 @@ dependencies:
   react-icons:
     specifier: ^4.9.0
     version: 4.9.0(react@18.2.0)
+  react-sketch-canvas:
+    specifier: ^6.2.0
+    version: 6.2.0(react@18.2.0)
   react-wrap-balancer:
     specifier: ^1.0.0
     version: 1.0.0(react@18.2.0)
@@ -112,7 +124,7 @@ dependencies:
     version: 3.3.2
   tauri-plugin-store-api:
     specifier: github:tauri-apps/tauri-plugin-store#v1
-    version: github.com/tauri-apps/tauri-plugin-store/1467ba770623ab1d41d825841c3d9435d9eaa0f1
+    version: github.com/tauri-apps/tauri-plugin-store/96e2eb3971c981ece96f0a9e47dad14a2d1d2539
   typescript:
     specifier: 5.1.3
     version: 5.1.3
@@ -8387,6 +8399,14 @@ packages:
     engines: {node: '>=14.18.0'}
     dev: false
 
+  /iconoir-react@6.9.0(react@18.2.0):
+    resolution: {integrity: sha512-W5ccshULAYstQFHTILvrmqEuJJ8pq+DBQEx1WF+y9JZFx4QrHPvhx1hMB3a96qBB3NdPhHODmA2kuSU+ys6VUQ==}
+    peerDependencies:
+      react: ^16.8.6 || ^17 || ^18
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
     engines: {node: '>=0.10.0'}
@@ -9127,7 +9147,6 @@ packages:
 
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: true
 
   /log-symbols@4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
@@ -9169,6 +9188,14 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
+
+  /lucide-react@0.258.0(react@18.2.0):
+    resolution: {integrity: sha512-3evnpKadBrjLr2HHJ66eDZ1y0vPS6pm8NiNDaLqhddUUyJGnA+lfDPZfbVkuAFq7Xaa1TEy7Sg17sM7mHpMKrA==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
@@ -10502,6 +10529,15 @@ packages:
       tslib: 2.5.3
       use-callback-ref: 1.3.0(@types/react@18.2.12)(react@18.2.0)
       use-sidecar: 1.1.2(@types/react@18.2.12)(react@18.2.0)
+    dev: false
+
+  /react-sketch-canvas@6.2.0(react@18.2.0):
+    resolution: {integrity: sha512-Z56RQN0viV9W3Y+DpZfQMi2lf3pO+UB4l+cMwnx7j7pQ9WHkQwN+qZKVFGANgpjXQMyY42NODF/DXjuKPCMf1w==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-style-singleton@2.2.1(@types/react@18.2.12)(react@18.2.0):
@@ -12195,8 +12231,8 @@ packages:
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
 
-  github.com/tauri-apps/tauri-plugin-store/1467ba770623ab1d41d825841c3d9435d9eaa0f1:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/1467ba770623ab1d41d825841c3d9435d9eaa0f1}
+  github.com/tauri-apps/tauri-plugin-store/96e2eb3971c981ece96f0a9e47dad14a2d1d2539:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/96e2eb3971c981ece96f0a9e47dad14a2d1d2539}
     name: tauri-plugin-store-api
     version: 0.0.0
     dependencies:

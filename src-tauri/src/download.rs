@@ -2,6 +2,7 @@ use reqwest::Client;
 use std::cmp::min;
 use std::fs::File;
 use std::io::{Seek, Write};
+use std::path::Path;
 //use indicatif::{ProgressBar, ProgressStyle};
 use futures_util::StreamExt;
 use serde::{Deserialize, Serialize};
@@ -31,11 +32,13 @@ impl Progress {
 #[tauri::command]
 pub async fn download_file(
   url: String,
-  path: String,
+  name: String,
   window: Window,
 ) -> Result<(), String> {
   let client = Client::new();
   let start_time = Instant::now();
+  let output_path_buf = Path::new("./download").join(format!("{}.bin", name));
+  let path = output_path_buf.display().to_string();
   let mut last_update = std::time::Instant::now();
   let res = client
     .get(&url)
