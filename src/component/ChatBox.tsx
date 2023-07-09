@@ -7,6 +7,9 @@ import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './ChatLine'
 import TextField from "@/component/TextField";
 import { RiSendPlaneFill as SendIcon } from "react-icons/ri";
 import clsx from "clsx";
+import * as client from "@/services/client"
+import useStore from "@/providers/store";
+import { useGlobal } from "@/providers/global";
 
 // default first message to display in UI (not necessary to define the prompt)
 export const initialMessages: ChatGPTMessage[] = [
@@ -27,9 +30,10 @@ type ChatBoxProps = {
 const ChatBox = (props: ChatBoxProps) => {
   const [input, setInput] = useState<string>('');
   const [loading, setLoading] = useState(false);
+ 
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages);
   const ref = useRef<HTMLDivElement | null>(null);
-
+  const {store} = useGlobal();
   useEffect(() => {
     const unlistener: Promise<UnlistenFn> = listen<Message>('NEW_TOKEN', (event: Event<Message>) => {
       setMessages((current) => {
@@ -61,7 +65,32 @@ const ChatBox = (props: ChatBoxProps) => {
 
     const sentMessage= newMessages.slice(-1)
     console.log(`Sent message:${sentMessage}`)
-    const response = await invoke("chat", {message: message});
+    if (store.usingOpenAI) {
+      const generate = async(promptMsgs: ChatGPTMessage[], targetMsg: ChatGPTMessage) => {
+        await client.replay(
+          store.settings.openaiKey,
+          store.settings.apiHost,
+          promptMsgs,
+          ({ text, cancel }) => {
+            setMessages((current) => {
+              const lastMessage = current.slice(-1).shift();
+              switch (lastMessage?.role) {
+                case 'assistant': return [...current.slice(0, current.length-1), { ...lastMessage, content: `${text}` }];
+                case 'user': return [...current, { role: 'assistant', content: text }];
+              }
+            });
+          }
+        )
+      
+      }
+      generate(newMessages, { role: 'user', content: message } as ChatGPTMessage)
+    }
+    else {
+      const response = await invoke("chat", {message: message});
+      console.log("using local model")
+    }
+
+
   }
 
   const submit = () => {
