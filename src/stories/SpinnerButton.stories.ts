@@ -18,7 +18,7 @@ export default meta;
 type Story = StoryObj<typeof SpinnerButton>;
 
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
-export const Spinner: Story = {
+export const Primary: Story = {
   args: {
     isSpinning: true,
   },
