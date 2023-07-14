@@ -7,6 +7,7 @@ import { Inter } from 'next/font/google'
 import { ReactNode } from "react";
 import '@/app/globals.css';
 import { GlobalProvider } from "@/providers/global";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +24,7 @@ const RootLayout = (props: RootLayoutProps) => (
   <html lang="en" className="[color-scheme:dark]">
     <body className={ clsx("bg-gray-1100 bg-[url('/grid.svg')]", inter.className) }>
       <GlobalProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <Main className="flex flex-col items-center justify-between">
         <div className="flex items-start justify-between w-full h-full overflow-hidden">
           <Sidebar className="h-full" />
@@ -30,6 +32,7 @@ const RootLayout = (props: RootLayoutProps) => (
         </div>
         <div className="w-full min-h-fit bg-foreground-mute border-t border-primary text-primary">Chat Bot Statistics | 69 wpm</div>
       </Main>
+      </ThemeProvider>
       </GlobalProvider>
     </body>
   </html>

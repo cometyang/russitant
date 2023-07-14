@@ -9,6 +9,7 @@ import {FormControlLabel, Switch, TextField} from "@mui/material";
 import React, { useState } from "react";
 import { OpenAISettings } from "@/interfaces/types";
 import { getDefaultSettings } from "http2";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 
 export default function Chat() {
 
@@ -25,7 +26,7 @@ export default function Chat() {
         checked={store.usingOpenAI}
         onChange={switchHandler}
       />} label={store.usingOpenAI? "OpenAI": "Local Model"} />
-
+      <ModeToggle/>
       <TextField
                     autoFocus
                     margin="dense"

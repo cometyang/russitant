@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ChatGPTMessage, ChatLine } from '../component/ChatLine';
+import { ChatGPTMessage, ChatBox } from '../component/ChatBox';
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction
-const meta: Meta<typeof ChatLine> = {
-  title: 'Example/ChatLine',
-  component: ChatLine,
+const meta: Meta<typeof ChatBox> = {
+  title: 'Example/ChatBox',
+  component: ChatBox,
   tags: ['autodocs'],
   argTypes: {
 
@@ -13,7 +13,7 @@ const meta: Meta<typeof ChatLine> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ChatLine>;
+type Story = StoryObj<typeof ChatBox>;
 
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
 export const Primary: Story = {
